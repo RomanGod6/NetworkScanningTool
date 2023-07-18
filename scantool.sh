@@ -1,4 +1,7 @@
 #!/bin/bash
+# Ask the user for a port range to scan
+echo "Enter a port range to scan (for example, '1-1024'): "
+read PORT_RANGE
 # Get a list of all network interfaces
 INTERFACES=$(ip -o link show | awk -F': ' '{print $2}')
 # Iterate over each interface
@@ -10,6 +13,6 @@ do
   if [ -z "$IP_AND_MASK" ]; then
     continue
   fi
-  # Run a network scan and save the output to a file
-  nmap -sn -PR $IP_AND_MASK > "${INTERFACE}_scan.txt"
+  # Run a network scan on the specified port range and save the output to a file
+  nmap -p$PORT_RANGE -PR $IP_AND_MASK > "${INTERFACE}_scan.txt"
 done
