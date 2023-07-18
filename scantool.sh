@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 # Specify the interfaces to scan
-INTERFACES=("eth3" "eth4" "eth5" "eth6")
+INTERFACES="eth3 eth4 eth5 eth6"
 
 # Iterate over each interface
-for INTERFACE in "${INTERFACES[@]}"
+for INTERFACE in $INTERFACES
 do
   # Get the IP address and subnet mask for this interface
-  IP_AND_MASK=$(ip -o -f inet addr show $INTERFACE | awk '/scope global/ {print $4}')
+  IP_AND_MASK=$(ifconfig $INTERFACE | awk '/inet / {print $2}')
   # If IP_AND_MASK is empty, skip this interface
   if [ -z "$IP_AND_MASK" ]; then
     echo "No IP address found for $INTERFACE"
