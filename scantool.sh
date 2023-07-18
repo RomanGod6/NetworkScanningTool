@@ -1,2 +1,2 @@
 #!/bin/sh
-echo /proc/net/arp
+cat /proc/net/arp
