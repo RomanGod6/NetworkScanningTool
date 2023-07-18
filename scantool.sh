@@ -7,15 +7,15 @@ for INTERFACE in $INTERFACES
 do
   echo "Scanning $INTERFACE ..."
   
-  # Run ARP command to retrieve the ARP table for the interface
-  ARP_OUTPUT=$(arp)
+  # Retrieve the ARP table for the interface from /proc/net/arp
+  ARP_OUTPUT=$(cat /proc/net/arp | grep $INTERFACE)
   
   # Use a while-read loop to iterate over the lines of the ARP output
   echo "$ARP_OUTPUT" | while read -r line
   do
     # Extract the IP and MAC addresses from the line
     IP_ADDRESS=$(echo "$line" | awk '{print $1}')
-    MAC_ADDRESS=$(echo "$line" | awk '{print $3}')
+    MAC_ADDRESS=$(echo "$line" | awk '{print $4}')
     
     # Output the IP and MAC addresses
     echo "IP Address: $IP_ADDRESS"
