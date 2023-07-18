@@ -12,6 +12,38 @@ do
     echo "No IP address found for $INTERFACE"
     continue
   fi
-  # Run a network scan and save the output to a file
-  nmap -sn -PR $IP_AND_MASK > "${INTERFACE}_scan.txt"
+
+  echo "Scanning $INTERFACE ..."
+  
+  # Run ARP command to retrieve the ARP table
+  ARP_OUTPUT=$(arp -i $INTERFACE -n)
+  
+  # Extract IP and MAC addresses from ARP table
+  IP_ADDRESSES=$(echo "$ARP_OUTPUT" | awk '{print $1}')
+  MAC_ADDRESSES=$(echo "$ARP_OUTPUT" | awk '{print $3}')
+  
+  # Iterate over each IP and MAC address
+  IFS=$'\n'
+  IP_ARRAY=($IP_ADDRESSES)
+  MAC_ARRAY=($MAC_ADDRESSES)
+  
+  for ((i=0; i<${#IP_ARRAY[@]}; i++))
+  do
+    IP_ADDRESS=${IP_ARRAY[i]}
+    MAC_ADDRESS=${MAC_ARRAY[i]}
+    
+    # Run MAC address lookup using MAC address vendor lookup service (macvendors.com)
+    VENDOR_INFO=$(curl -s "https://api.macvendors.com/${MAC_ADDRESS}")
+    if [ $? -eq 0 ]; then
+      DEVICE_VENDOR=$(echo "$VENDOR_INFO" | awk '{$1=""; print $0}')
+    else
+      DEVICE_VENDOR="Unknown"
+    fi
+    
+    # Output the IP, MAC, and vendor information
+    echo "IP Address: $IP_ADDRESS"
+    echo "MAC Address: $MAC_ADDRESS"
+    echo "Vendor: $DEVICE_VENDOR"
+    echo "---"
+  done
 done
