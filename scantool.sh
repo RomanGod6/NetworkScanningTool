@@ -5,18 +5,9 @@ INTERFACES="eth3 eth4 eth5 eth6"
 # Iterate over each interface
 for INTERFACE in $INTERFACES
 do
-  # Get the IP address for this interface
-  IP_ADDRESS=$(ifconfig $INTERFACE | awk '/inet / {print $2}')
-  
-  # If IP_ADDRESS is empty, skip this interface
-  if [ -z "$IP_ADDRESS" ]; then
-    echo "No IP address found for $INTERFACE"
-    continue
-  fi
-  
   echo "Scanning $INTERFACE ..."
   
-  # Run ARP command to retrieve the ARP table
+  # Run ARP command to retrieve the ARP table for the interface
   ARP_OUTPUT=$(arp -i $INTERFACE -n)
   
   # Extract IP and MAC addresses from ARP table
