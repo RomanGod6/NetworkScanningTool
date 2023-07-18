@@ -5,14 +5,15 @@ INTERFACES="eth3 eth4 eth5 eth6"
 # Iterate over each interface
 for INTERFACE in $INTERFACES
 do
-  # Get the IP address and subnet mask for this interface
-  IP_AND_MASK=$(ip -o -f inet addr show $INTERFACE | awk '/scope global/ {print $4}')
-  # If IP_AND_MASK is empty, skip this interface
-  if [ -z "$IP_AND_MASK" ]; then
+  # Get the IP address for this interface
+  IP_ADDRESS=$(ifconfig $INTERFACE | awk '/inet / {print $2}')
+  
+  # If IP_ADDRESS is empty, skip this interface
+  if [ -z "$IP_ADDRESS" ]; then
     echo "No IP address found for $INTERFACE"
     continue
   fi
-
+  
   echo "Scanning $INTERFACE ..."
   
   # Run ARP command to retrieve the ARP table
@@ -32,18 +33,9 @@ do
     IP_ADDRESS=${IP_ARRAY[i]}
     MAC_ADDRESS=${MAC_ARRAY[i]}
     
-    # Run MAC address lookup using MAC address vendor lookup service (macvendors.com)
-    VENDOR_INFO=$(curl -s "https://api.macvendors.com/${MAC_ADDRESS}")
-    if [ $? -eq 0 ]; then
-      DEVICE_VENDOR=$(echo "$VENDOR_INFO" | awk '{$1=""; print $0}')
-    else
-      DEVICE_VENDOR="Unknown"
-    fi
-    
-    # Output the IP, MAC, and vendor information
+    # Output the IP and MAC addresses
     echo "IP Address: $IP_ADDRESS"
     echo "MAC Address: $MAC_ADDRESS"
-    echo "Vendor: $DEVICE_VENDOR"
     echo "---"
   done
 done
