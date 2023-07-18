@@ -1,5 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
-# Run ARP command and print the output
-ARP_OUTPUT=$(arp)
-echo "$ARP_OUTPUT"
+# Run the arp command
+arp
