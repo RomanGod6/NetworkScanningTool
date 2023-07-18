@@ -1,6 +1,6 @@
 #!/bin/bash
 # Specify the interface to scan
-INTERFACE="eth4"
+INTERFACE="eth0"
 # Get the IP address and subnet mask for this interface
 IP_AND_MASK=$(ip -o -f inet addr show $INTERFACE | awk '/scope global/ {print $4}')
 # If IP_AND_MASK is empty, skip this interface
