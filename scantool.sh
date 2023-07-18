@@ -8,7 +8,7 @@ do
   echo "Scanning $INTERFACE ..."
   
   # Run ARP command to retrieve the ARP table for the interface
-  ARP_OUTPUT=$(arp -i $INTERFACE -n)
+  ARP_OUTPUT=$(arp -n | grep $INTERFACE)
   
   # Extract IP and MAC addresses from ARP table
   IP_ADDRESSES=$(echo "$ARP_OUTPUT" | awk '{print $1}')
@@ -19,10 +19,10 @@ do
   IP_ARRAY=($IP_ADDRESSES)
   MAC_ARRAY=($MAC_ADDRESSES)
   
-  for ((i=0; i<${#IP_ARRAY[@]}; i++))
+  for i in $(seq 1 ${#IP_ARRAY[@]})
   do
-    IP_ADDRESS=${IP_ARRAY[i]}
-    MAC_ADDRESS=${MAC_ARRAY[i]}
+    IP_ADDRESS=$(echo "${IP_ARRAY[i-1]}")
+    MAC_ADDRESS=$(echo "${MAC_ARRAY[i-1]}")
     
     # Output the IP and MAC addresses
     echo "IP Address: $IP_ADDRESS"
